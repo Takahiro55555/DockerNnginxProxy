@@ -36,4 +36,4 @@ docker-compose up -d
 
 ### 5. portainer にアクセスする
 
-[http://localhost:9000](http://localhost:9000)にアクセスして、ユーザ登録を済ませれば初期設定魔完了です。
+[http://localhost:9000](http://localhost:9000)にアクセスして、ユーザ登録を済ませれば初期設定は完了です。
