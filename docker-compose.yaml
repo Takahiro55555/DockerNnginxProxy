@@ -1,0 +1,46 @@
+version: "3"
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    privileged: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /srv/docker/nginx-proxy-with-encrypt/certs:/etc/nginx/certs:ro
+      - ./log/nginx-proxy:/var/log/nginx  # ログファイル
+      - /etc/nginx/vhost.d
+      - /usr/share/nginx/html
+    restart: always
+
+  letsencrypt-nginx:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt-nginx
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /srv/docker/nginx-proxy-with-encrypt/certs:/etc/nginx/certs:rw
+    volumes_from:
+      - nginx-proxy
+    restart: always
+
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    ports:
+      - 9000:9000
+      - 8000:8000
+
+volumes:
+  portainer_data:
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
