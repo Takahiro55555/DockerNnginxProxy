@@ -1,8 +1,9 @@
-version: "3"
+version: "2"
 services:
   nginx-proxy:
     image: jwilder/nginx-proxy
     container_name: nginx-proxy
+    restart: always
     privileged: true
     ports:
       - "80:80"
@@ -13,23 +14,24 @@ services:
       - ./log/nginx-proxy:/var/log/nginx  # ログファイル
       - /etc/nginx/vhost.d
       - /usr/share/nginx/html
-    restart: always
 
   letsencrypt-nginx:
     image: jrcs/letsencrypt-nginx-proxy-companion
     container_name: letsencrypt-nginx
+    restart: always
     privileged: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /srv/docker/nginx-proxy-with-encrypt/certs:/etc/nginx/certs:rw
     volumes_from:
       - nginx-proxy
-    restart: always
 
   portainer:
     image: portainer/portainer
     container_name: portainer
+    restart: always
     privileged: true
+    command: -H unix:///var/run/docker.sock
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
